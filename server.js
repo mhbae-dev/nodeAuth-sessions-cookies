@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 import { default as connectMongoDBSession } from "connect-mongodb-session";
 import mongoose from "mongoose";
+import PostUser from "./models/User.js";
 
 const mongoURI = "mongodb://127.0.0.1:27017/sessions";
 const MongoDBStore = connectMongoDBSession(session);
