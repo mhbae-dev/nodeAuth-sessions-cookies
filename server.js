@@ -86,12 +86,19 @@ app.post("/login", async (req, res) => {
     req.session.error = "Incorrect password";
     return res.redirect("/login");
   }
-  res.session.isAuth = true;
+  req.session.isAuth = true;
   res.redirect("/dashboard");
 });
 
 app.get("/dashboard", isAuth, (req, res) => {
   res.render("dashboard");
+});
+
+app.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) throw err;
+    res.redirect("/dashboard");
+  });
 });
 
 app.listen(PORT, () => {
