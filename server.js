@@ -4,6 +4,7 @@ import session from "express-session";
 import { default as connectMongoDBSession } from "connect-mongodb-session";
 import mongoose from "mongoose";
 import UserModel from "./models/User.js";
+import isAuth from "./middleware/isAuth.js";
 const mongoURI = "mongodb://127.0.0.1:27017/sessions";
 const MongoDBStore = connectMongoDBSession(session);
 
@@ -85,11 +86,11 @@ app.post("/login", async (req, res) => {
     req.session.error = "Incorrect password";
     return res.redirect("/login");
   }
-
+  res.session.isAuth = true;
   res.redirect("/dashboard");
 });
 
-app.get("/dashboard", (req, res) => {
+app.get("/dashboard", isAuth, (req, res) => {
   res.render("dashboard");
 });
 
