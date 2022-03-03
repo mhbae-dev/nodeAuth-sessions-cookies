@@ -71,6 +71,24 @@ app.post("/register", async (req, res) => {
   res.redirect("/login");
 });
 
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  let user = await UserModel.findOne({ email });
+  if (!user) {
+    req.session.error = "This user does not exist";
+    return res.redirect("/login");
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    req.session.error = "Incorrect password";
+    return res.redirect("/login");
+  }
+
+  res.redirect("/dashboard");
+});
+
 app.get("/dashboard", (req, res) => {
   res.render("dashboard");
 });
