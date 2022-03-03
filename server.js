@@ -1,28 +1,38 @@
 import express from "express";
 import session from "express-session";
+import { default as connectMongoDBSession } from "connect-mongodb-session";
 import mongoose from "mongoose";
+
+const mongoURI = "mongodb://127.0.0.1:27017/sessions";
+const MongoDBStore = connectMongoDBSession(session);
 
 const app = express();
 const PORT = 5000;
 
 //DATABASE CONNECTION
 mongoose
-  .connect("mongodb://127.0.0.1:27017/sessions")
+  .connect(mongoURI)
   .then((res) => {
     console.log("MongoDDB Connected");
   })
   .catch((error) => handleError(error));
+
+const store = new MongoDBStore({
+  uri: mongoURI,
+  collection: "session",
+});
 
 app.use(
   session({
     secret: "key will sign cookie",
     resave: false,
     saveUninitialized: false,
+    store: store,
   })
 );
 
 app.get("/", (req, res) => {
-  console.log(req.session);
+  req.session.isAuth = true;
   res.send("Hello Sessions");
 });
 
